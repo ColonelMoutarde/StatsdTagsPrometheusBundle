@@ -20,7 +20,7 @@ class MetricHandler
     /** @var Request|null */
     protected $request;
 
-    /** @var \SplQueue */
+    /** @var \SplQueue<MetricInterface> */
     protected $metrics;
 
     /** @var int */
@@ -58,8 +58,8 @@ class MetricHandler
     public function isMaxNumberOfMetricsReached(): bool
     {
         return
-            !empty($this->maxNumberOfMetricToQueue) &&
-            ($this->getMetrics()->count() >= $this->maxNumberOfMetricToQueue);
+            !empty($this->maxNumberOfMetricToQueue)
+            && ($this->getMetrics()->count() >= $this->maxNumberOfMetricToQueue);
     }
 
     public function sendMetrics(): bool
@@ -101,6 +101,7 @@ class MetricHandler
         $this->request = $request;
     }
 
+    /** @param \SplQueue<MetricInterface> $queue */
     public function setMetricsQueue(\SplQueue $queue): void
     {
         $this->metrics = $queue;
@@ -113,6 +114,7 @@ class MetricHandler
         return $this;
     }
 
+    /** @return \SplQueue<MetricInterface> */
     public function getMetrics(): \SplQueue
     {
         return $this->metrics;
@@ -144,16 +146,16 @@ class MetricHandler
 
     /**
      * Format data to send to the server
+     *
+     * @return array<string>
      */
     protected function getMetricsAsArray(): array
     {
         $metrics = [];
         foreach ($this->getMetrics() as $metric) {
-            if ($metric instanceof MetricInterface) {
-                try {
-                    $metrics[] = $this->getFormattedMetric($metric);
-                } catch (MetricException $e) {
-                }
+            try {
+                $metrics[] = $this->getFormattedMetric($metric);
+            } catch (MetricException $e) {
             }
         }
 
@@ -181,6 +183,7 @@ class MetricHandler
         ]);
     }
 
+    /** @param array<string, string> $data */
     protected function getFormattedMetricFromData(array $data): string
     {
         return str_replace(array_keys($data), array_values($data), self::METRIC_FORMAT);
@@ -188,6 +191,8 @@ class MetricHandler
 
     /**
      * Format metric tags on format "|#tag1:value1,tag2:value2,tag3:value3"
+     *
+     * @param array<string, string> $tags
      */
     protected function formatTagsInline(array $tags): string
     {
@@ -200,6 +205,6 @@ class MetricHandler
         );
         $inlineTags = implode(',', $formatLines);
 
-        return !empty($inlineTags) ? '|#'.$inlineTags : '';
+        return !empty($inlineTags) ? '|#' . $inlineTags : '';
     }
 }

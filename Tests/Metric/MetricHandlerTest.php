@@ -6,6 +6,7 @@ use M6Web\Bundle\StatsdPrometheusBundle\Client\ClientInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Client\UdpClient;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
+use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Tests\Fixtures\CustomEventTest;
 use M6Web\Bundle\StatsdPrometheusBundle\Tests\TestMonitoringEvent;
 use PHPUnit\Framework\TestCase;
@@ -216,7 +217,8 @@ class MetricHandlerTest extends TestCase
     /**
      * @dataProvider getDataEventsWithFormattedMetrics
      *
-     * @param Event|KernelEvent $event
+     * @param Event|KernelEvent    $event
+     * @param array<string, mixed> $metricConfig
      */
     public function testGetFormattedMetricsReturnsExpected($event, Request $masterRequest, array $metricConfig, string $expectedResult): void
     {
@@ -228,7 +230,8 @@ class MetricHandlerTest extends TestCase
         $this->assertSame($expectedResult, $metricHandler->getFormattedMetric($metric));
     }
 
-    protected function getMetricHandlerObject(ClientInterface $client = null, \SplQueue $metricsQueue = null): MetricHandler
+    /** @param \SplQueue<MetricInterface>|null $metricsQueue */
+    protected function getMetricHandlerObject(?ClientInterface $client = null, ?\SplQueue $metricsQueue = null): MetricHandler
     {
         $metricHandler = new MetricHandler();
         if ($client) {
@@ -242,7 +245,7 @@ class MetricHandlerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\SplQueue
+     * @return \PHPUnit\Framework\MockObject\MockObject&\SplQueue<MetricInterface>
      */
     private function getMetricsQueueMock(bool $isEmpty, int $count = 0)
     {
@@ -256,13 +259,14 @@ class MetricHandlerTest extends TestCase
     }
 
     /**
-     * @return UdpClient|\PHPUnit\Framework\MockObject\MockObject
+     * @return UdpClient&\PHPUnit\Framework\MockObject\MockObject
      */
     private function getUdpClientMock()
     {
         return $this->createMock(UdpClient::class);
     }
 
+    /** @return array<mixed> */
     public function getDataEventsWithFormattedMetrics(): array
     {
         $defaultRequest = new Request([], ['country' => 'fr']);
@@ -293,7 +297,7 @@ class MetricHandlerTest extends TestCase
                     'type' => 'increment',
                     'name' => 'http.status.200',
                     'configurationTags' => [
-                        'IamUnknown' => '@=request ? request.get("IamUnknown", "unknown") : "unknown"',
+                        'IamUnknown' => '@=request ? request.request.get("IamUnknown", "unknown") : "unknown"',
                     ],
                     'tags' => [],
                 ],
@@ -312,7 +316,7 @@ class MetricHandlerTest extends TestCase
                     'type' => 'increment',
                     'name' => 'http.status.200',
                     'configurationTags' => [
-                        'country' => '@=request ? request.get("country", "unknown") : "unknown"',
+                        'country' => '@=request ? request.request.get("country", "unknown") : "unknown"',
                     ],
                     'tags' => [],
                 ],

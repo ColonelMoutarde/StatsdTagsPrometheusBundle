@@ -22,7 +22,7 @@ class ConsoleMonitoringEventFacade
         ?float $executionTime,
         int $memoryPeakInBytes,
         ?string $commandName,
-        ?ConsoleEvent $originalEvent = null
+        ?ConsoleEvent $originalEvent = null,
     ) {
         $this->startTime = $startTime;
         $this->executionTime = $executionTime;
@@ -31,7 +31,7 @@ class ConsoleMonitoringEventFacade
         $this->originalEvent = $originalEvent;
     }
 
-    public static function fromEvent(ConsoleEvent $event, ?float $startTime): ConsoleMonitoringEventFacade
+    public static function fromEvent(ConsoleEvent $event, ?float $startTime): self
     {
         return new self(
             $startTime,
@@ -42,6 +42,7 @@ class ConsoleMonitoringEventFacade
         );
     }
 
+    /** @return array<string, mixed> */
     public function toMonitoringArray(): array
     {
         return [

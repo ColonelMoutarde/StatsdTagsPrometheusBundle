@@ -114,7 +114,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 
     protected function getServiceIdFrom(string $alias): string
     {
-        return ($alias === 'default') ? self::CONFIG_ROOT_KEY : self::CONFIG_ROOT_KEY.$alias;
+        return ($alias === 'default') ? self::CONFIG_ROOT_KEY : self::CONFIG_ROOT_KEY . $alias;
     }
 
     /**
@@ -135,7 +135,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
                         $eventsGroupConfig['tags'] ?? []
                     );
                     // Prefix the metric name.
-                    $metricConfig['name'] = $this->metricsPrefix.$metricConfig['name'];
+                    $metricConfig['name'] = $this->metricsPrefix . $metricConfig['name'];
                 }
                 // Set all the metrics config array in the object
                 // One event can send several metrics. Multiple metrics will be handled in the EventListener.
@@ -245,6 +245,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
         if (!\array_key_exists($serverName, $this->servers)) {
             throw new InvalidConfigurationException(sprintf('M6WebStatsd client %s used server %s which is not defined in the servers section', $clientName, $serverName));
         }
+
         // Matched server configurations.
         return new Definition(Server::class, [
             $serverName,

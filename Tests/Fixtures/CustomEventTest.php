@@ -15,7 +15,7 @@ class CustomEventTest extends Event
     /** @var string|null */
     private $placeHolder2;
 
-    public function __construct(?float $value, string $placeHolder1 = null, string $placeHolder2 = null)
+    public function __construct(?float $value, ?string $placeHolder1 = null, ?string $placeHolder2 = null)
     {
         $this->value = $value;
         $this->placeHolder1 = $placeHolder1;

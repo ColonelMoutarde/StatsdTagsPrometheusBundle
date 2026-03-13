@@ -36,7 +36,7 @@ class StatsdDataCollector extends DataCollector
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
+        if (HttpKernelInterface::MAIN_REQUEST === $event->getRequestType()) {
             foreach ($this->eventListeners as $serviceId => $eventListener) {
                 $clientInfo = [
                     'name' => $serviceId,
@@ -45,14 +45,12 @@ class StatsdDataCollector extends DataCollector
                 $metricHandler = $eventListener->getMetricHandler();
 
                 foreach ($metricHandler->getMetrics() as $metric) {
-                    if ($metric instanceof MetricInterface) {
-                        try {
-                            $clientInfo['operations'][] = [
-                                'message' => $metricHandler->getFormattedMetric($metric),
-                            ];
-                            $this->data['operations']++;
-                        } catch (MetricException $e) {
-                        }
+                    try {
+                        $clientInfo['operations'][] = [
+                            'message' => $metricHandler->getFormattedMetric($metric),
+                        ];
+                        $this->data['operations']++;
+                    } catch (MetricException $e) {
                     }
                 }
                 $this->data['clients'][] = $clientInfo;
@@ -71,18 +69,16 @@ class StatsdDataCollector extends DataCollector
     /**
      * Collect the data
      *
-     * @param Request    $request   The request object
-     * @param Response   $response  The response object
-     * @param \Throwable $exception A throwable
+     * @param Request         $request   The request object
+     * @param Response        $response  The response object
+     * @param \Throwable|null $exception A throwable
      */
-    public function collect(Request $request, Response $response, \Throwable $exception = null): void
-    {
-    }
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void {}
 
     /**
      * Return the list of statsd operations
      *
-     * @return array operations list
+     * @return array<mixed> operations list
      */
     public function getClients(): array
     {
@@ -104,7 +100,7 @@ class StatsdDataCollector extends DataCollector
      *
      * @return string data collector name
      */
-    public function getName()
+    public function getName(): string
     {
         return 'statsd';
     }

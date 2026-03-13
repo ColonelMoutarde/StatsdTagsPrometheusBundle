@@ -11,14 +11,12 @@ use Symfony\Component\PropertyAccess;
 
 class EventListener
 {
-    /** @var array */
-    protected $listenedEvents = [];
+    /** @var array<string, mixed> */
+    protected array $listenedEvents = [];
 
-    /** @var PropertyAccess\PropertyAccessorInterface */
-    protected $propertyAccessor;
+    protected PropertyAccess\PropertyAccessorInterface $propertyAccessor;
 
-    /** @var MetricHandler */
-    protected $metricHandler;
+    protected MetricHandler $metricHandler;
 
     public function __construct(MetricHandler $metricHandler)
     {
@@ -57,8 +55,7 @@ class EventListener
         // We only need the master request in order to keep all the original request headers
         // This will be used to resolve advanced configuration tags.
         // such as '@=request.get('queryParam')'
-        $isMainRequest = method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest();
-        if ($isMainRequest) {
+        if ($event->isMainRequest()) {
             $this->metricHandler->setRequest($event->getRequest());
         }
     }
@@ -73,6 +70,7 @@ class EventListener
         $this->metricHandler->sendMetrics();
     }
 
+    /** @param array<string, mixed> $eventConfig */
     public function addEventToListen(string $eventName, array $eventConfig): self
     {
         $this->listenedEvents[$eventName] = $eventConfig;

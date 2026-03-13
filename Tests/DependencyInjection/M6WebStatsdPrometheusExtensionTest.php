@@ -20,6 +20,9 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
 
     /**
      * @dataProvider dataProviderForGetServersReturnsExpectation
+     *
+     * @param array<mixed> $config
+     * @param array<mixed> $expected
      */
     public function testGetServersReturnsExpectation(array $config, array $expected): void
     {
@@ -31,6 +34,9 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
 
     /**
      * @dataProvider dataProviderForGetClientsReturnsExpectation
+     *
+     * @param array<mixed> $config
+     * @param array<mixed> $expected
      */
     public function testGetClientsReturnsExpectation(array $config, array $expected): void
     {
@@ -78,7 +84,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     public function testLoadCorrectYmlConfigurationFileDoesNotThrowException(): void
     {
         // -- Given --
-        $config = Yaml::parseFile(__DIR__.'/../Fixtures/CorrectConfigurationFileTest.yml');
+        $config = Yaml::parseFile(__DIR__ . '/../Fixtures/CorrectConfigurationFileTest.yml');
         // -- Expects --
         // NO exceptions
         // -- When --
@@ -88,13 +94,14 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     public function testLoadWrongYmlConfigurationFileThrowsException(): void
     {
         // -- Given --
-        $config = Yaml::parseFile(__DIR__.'/../Fixtures/WrongConfigurationFileTest.yml');
+        $config = Yaml::parseFile(__DIR__ . '/../Fixtures/WrongConfigurationFileTest.yml');
         // -- Expects --
         $this->expectException(InvalidConfigurationException::class);
         // -- When --
         $this->extension->load([$config[M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY]], $this->container);
     }
 
+    /** @return array<mixed> */
     public function dataProviderForGetServersReturnsExpectation(): array
     {
         return [
@@ -119,6 +126,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         ];
     }
 
+    /** @return array<mixed> */
     public function dataProviderForGetClientsReturnsExpectation(): array
     {
         return [

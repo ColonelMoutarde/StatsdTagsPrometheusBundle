@@ -6,13 +6,13 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class AbstractMonitoringEvent extends Event implements MonitoringEventInterface
 {
-    /** @var array */
-    protected $parameters;
+    /** @var array<string, mixed> */
+    protected array $parameters;
 
     /**
      * AbstractMonitoringEvent constructor.
      *
-     * @param array $parameters parameters can contain metrics values, tags values or/and custom param values
+     * @param array<string, mixed> $parameters parameters can contain metrics values, tags values or/and custom param values
      *
      * @see https://github.com/M6Web/StatsdPrometheusBundle/blob/master/Doc/usage.md
      */

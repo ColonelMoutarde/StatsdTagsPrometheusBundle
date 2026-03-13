@@ -6,8 +6,8 @@ use M6Web\Bundle\StatsdPrometheusBundle\Exception\ServerException;
 
 class Server implements ServerInterface
 {
-    /** @var string */
-    private $name;
+    /** @phpstan-ignore property.onlyWritten */
+    private string $name;
 
     /** @var mixed string format udp://.+ */
     private $address;
@@ -18,6 +18,8 @@ class Server implements ServerInterface
     /**
      * Server constructor.
      *
+     * @param array<string, mixed> $serverConfig
+     *
      * @throws ServerException
      */
     public function __construct(string $serverName, array $serverConfig)
@@ -25,12 +27,14 @@ class Server implements ServerInterface
         if ($this->checkServersConfigurations($serverName, $serverConfig)) {
             $this->name = $serverName;
             $this->address = $serverConfig['address'];
-            $this->port = intval($serverConfig['port']);
+            $this->port = (int) $serverConfig['port'];
         }
     }
 
     /**
      * Init the servers defined in the app configuration
+     *
+     * @param array<string, mixed> $serverConfig
      *
      * @throws ServerException
      */
@@ -40,11 +44,11 @@ class Server implements ServerInterface
             throw new ServerException('No servers have been configured');
         }
 
-        if (!isset($serverConfig['address']) || !isset($serverConfig['port'])) {
-            throw new ServerException($serverName.' : no address or port in the configuration');
+        if (!isset($serverConfig['address'], $serverConfig['port'])) {
+            throw new ServerException($serverName . ' : no address or port in the configuration');
         }
-        if (strpos($serverConfig['address'], 'udp://') !== 0) {
-            throw new ServerException($serverName.' : address should begin with udp://');
+        if (!str_starts_with($serverConfig['address'], 'udp://')) {
+            throw new ServerException($serverName . ' : address should begin with udp://');
         }
 
         return true;

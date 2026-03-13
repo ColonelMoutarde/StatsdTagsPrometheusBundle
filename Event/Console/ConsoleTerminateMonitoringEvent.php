@@ -6,7 +6,7 @@ use M6Web\Bundle\StatsdPrometheusBundle\Event\AbstractMonitoringEvent;
 
 class ConsoleTerminateMonitoringEvent extends AbstractMonitoringEvent
 {
-    public static function fromFacade(ConsoleMonitoringEventFacade $facade): ConsoleTerminateMonitoringEvent
+    public static function fromFacade(ConsoleMonitoringEventFacade $facade): self
     {
         return new self($facade->toMonitoringArray());
     }

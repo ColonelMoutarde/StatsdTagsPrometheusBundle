@@ -48,7 +48,9 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('address')
                                 ->isRequired()
                                 ->validate()
-                                    ->ifTrue(function ($v) {return substr($v, 0, 6) !== 'udp://'; })
+                                    ->ifTrue(function ($v) {
+                                        return substr($v, 0, 6) !== 'udp://';
+                                    })
                                     ->thenInvalid("address parameter should begin with 'udp://'")
                                 ->end()
                             ->end()
@@ -187,13 +189,8 @@ class Configuration implements ConfigurationInterface
         return $eventsNode;
     }
 
-    private function getRootNode(TreeBuilder $treeBuilder, $name)
+    private function getRootNode(TreeBuilder $treeBuilder, string $name): ArrayNodeDefinition
     {
-        // BC layer for symfony/config 4.1 and older
-        if (!\method_exists($treeBuilder, 'getRootNode')) {
-            return $treeBuilder->root($name);
-        }
-
         return $treeBuilder->getRootNode();
     }
 }

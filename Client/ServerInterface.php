@@ -7,6 +7,8 @@ use M6Web\Bundle\StatsdPrometheusBundle\Exception\ServerException;
 interface ServerInterface
 {
     /**
+     * @param array<string, mixed> $serverConfig
+     *
      * @throws ServerException
      */
     public function __construct(string $serverName, array $serverConfig);

@@ -12,7 +12,7 @@ interface ClientInterface
     /**
      * Send metrics data to the configured server
      *
-     * @param array $lines array of string lines to send
+     * @param array<string> $lines array of string lines to send
      */
     public function sendLines(array $lines): void;
 }

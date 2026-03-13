@@ -30,5 +30,7 @@ class M6WebStatsdPrometheusBundle extends Bundle
         if ($this->extension) {
             return $this->extension;
         }
+
+        return null;
     }
 }

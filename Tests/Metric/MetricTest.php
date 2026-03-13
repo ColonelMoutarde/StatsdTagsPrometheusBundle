@@ -14,6 +14,8 @@ class MetricTest extends TestCase
 {
     /**
      * @dataProvider dataProviderGetMetricsName
+     *
+     * @param array<string, mixed> $metricConfig
      */
     public function testGetResolvedNameReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
@@ -23,6 +25,7 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedName());
     }
 
+    /** @return array<mixed> */
     public function dataProviderGetMetricsName(): array
     {
         return [
@@ -51,6 +54,8 @@ class MetricTest extends TestCase
 
     /**
      * @dataProvider dataProviderGetMetricsType
+     *
+     * @param array<string, mixed> $metricConfig
      */
     public function testGetResolvedTypeReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
@@ -60,6 +65,7 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedType());
     }
 
+    /** @return array<mixed> */
     public function dataProviderGetMetricsType(): array
     {
         return [
@@ -108,6 +114,8 @@ class MetricTest extends TestCase
 
     /**
      * @dataProvider dataProviderGetMetricsValue
+     *
+     * @param array<string, mixed> $metricConfig
      */
     public function testGetResolvedValueReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
@@ -117,6 +125,7 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedValue());
     }
 
+    /** @return array<mixed> */
     public function dataProviderGetMetricsValue(): array
     {
         return [
@@ -175,7 +184,7 @@ class MetricTest extends TestCase
                 '12045465',
             ],
             'custom value from object' => [
-                new class() extends Event {
+                new class extends Event {
                     public function getCustomValue(): int
                     {
                         return 10;
@@ -191,7 +200,7 @@ class MetricTest extends TestCase
                 '10',
             ],
             'custom value from object corrected by 1000' => [
-                new class() extends Event {
+                new class extends Event {
                     public function getCustomValue(): float
                     {
                         return 10.002;
@@ -218,8 +227,9 @@ class MetricTest extends TestCase
                 '0',
             ],
             'custom value from object return null' => [
-                new class() extends Event {
-                    public function getCustomValue(): ?int
+                new class extends Event {
+                    /** @return null */
+                    public function getCustomValue()
                     {
                         return null;
                     }
@@ -238,6 +248,10 @@ class MetricTest extends TestCase
 
     /**
      * @dataProvider dataProviderGetMetricsTag
+     *
+     * @param array<string, mixed> $metricConfig
+     * @param array<string, mixed> $resolvers
+     * @param array<string, string> $expectedResult
      */
     public function testGetResolvedTagsReturnsExpected(Event $event, array $metricConfig, array $resolvers, array $expectedResult): void
     {

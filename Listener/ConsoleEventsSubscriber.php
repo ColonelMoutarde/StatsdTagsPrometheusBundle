@@ -15,17 +15,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ConsoleEventsSubscriber implements EventSubscriberInterface
 {
-    /** @var EventDispatcherInterface */
-    protected $eventDispatcher = null;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * Time when command started
-     *
-     * @var float
-     */
-    protected $startTime = null;
+    /** Time when command started, used to compute command duration in the end of the command */
+    protected ?float $startTime = null;
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ConsoleEvents::COMMAND => 'onCommand',
@@ -51,7 +46,7 @@ class ConsoleEventsSubscriber implements EventSubscriberInterface
 
     public function onTerminate(ConsoleTerminateEvent $event): void
     {
-        if ($event->getExitCode() != 0) {
+        if ($event->getExitCode() !== 0) {
             // For non-0 exit command, fire an ERROR event
             $this->eventDispatcher->dispatch(
                 ConsoleErrorMonitoringEvent::fromFacade(

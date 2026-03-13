@@ -22,10 +22,12 @@ interface MetricInterface
     public function getResolvedType(): string;
 
     /**
-     * @param array $resolvers an associative array of resolvers
-     *                         ['resolver1' => $resolver1]
-     *                         Used to inject services in tag names:
-     *                         format: '@=my_service.myFunction()'
+     * @param array<string, mixed> $resolvers an associative array of resolvers
+     *                                        ['resolver1' => $resolver1]
+     *                                        Used to inject services in tag names:
+     *                                        format: '@=my_service.myFunction()'
+     *
+     * @return array<string, string>
      */
     public function getResolvedTags(array $resolvers): array;
 }

@@ -7,11 +7,9 @@ class UdpClient implements ClientInterface
     /** @var int max safe size in bytes of one message to send (max official size is 65507) */
     public const MAX_MESSAGE_SIZE = 64000;
 
-    /** @var ServerInterface */
-    protected $server;
+    protected ServerInterface $server;
 
-    /** @var ?bool */
-    protected $debugEnabled;
+    protected ?bool $debugEnabled;
 
     public function __construct(ServerInterface $server, ?bool $debugEnabled = false)
     {
@@ -21,6 +19,8 @@ class UdpClient implements ClientInterface
 
     /**
      * Split metrics to send them group by group
+     *
+     * @param array<string> $lines
      */
     public function sendLines(array $lines): void
     {
@@ -30,6 +30,7 @@ class UdpClient implements ClientInterface
         }
     }
 
+    /** @param array<string> $lines */
     protected function writeLines(array $lines): bool
     {
         if ($resource = @fsockopen($this->server->getAddress(), $this->server->getPort())) {
@@ -56,7 +57,7 @@ class UdpClient implements ClientInterface
     {
         if ($this->debugEnabled) {
             // With debug mode on, we add a carriage return to provide more readable data
-            return $line."\n";
+            return $line . "\n";
         }
 
         return $line;

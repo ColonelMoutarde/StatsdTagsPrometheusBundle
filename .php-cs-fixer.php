@@ -1,10 +1,16 @@
 <?php
 
-$config = new M6Web\CS\Config\Php71;
+$finder = (new PhpCsFixer\Finder())
+    ->in(__DIR__)
+;
 
-$config->getFinder()
-    ->in([
-        __DIR__
-    ]);
-
-return $config;
+return (new PhpCsFixer\Config())
+    ->setRules([
+        '@PSR12' => true,
+        '@PER-CS' => true,
+        '@PHP81Migration' => true,
+        '@PHPUnit80Migration' => true,
+        'array_syntax' => ['syntax' => 'short'],
+    ])
+    ->setFinder($finder)
+;

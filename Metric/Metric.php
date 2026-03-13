@@ -38,10 +38,10 @@ class Metric implements MetricInterface
     /** @var string */
     private $paramValue;
 
-    /** @var array */
+    /** @var array<string, mixed> */
     private $configurationTags = [];
 
-    /** @var array */
+    /** @var array<string, mixed> */
     private $tags;
 
     /** @var ExpressionLanguage */
@@ -50,7 +50,8 @@ class Metric implements MetricInterface
     /**
      * Metric constructor.
      *
-     * @param object $event
+     * @param object               $event
+     * @param array<string, mixed> $metricConfig
      */
     public function __construct($event, array $metricConfig = [])
     {
@@ -77,14 +78,12 @@ class Metric implements MetricInterface
             // We want to get all the matching results with the 1st parenthesis in the Regex.
             // $placeholders[0] will give the entire string with matching pattern
             // $placeholders[1] will give only matching pattern results: that's what we want
-            if (isset($placeholders[1])) {
-                try {
-                    $resolvedName = $this->resolvePlaceholdersInMetricName($resolvedName, $placeholders[1]);
-                } catch (\Exception $e) {
-                    // We try to throw only MetricExceptions to shut bad configurations exceptions
-                    // We consider that we are supposed to know what we do (professional power).
-                    throw new MetricException($e->getMessage());
-                }
+            try {
+                $resolvedName = $this->resolvePlaceholdersInMetricName($resolvedName, $placeholders[1]);
+            } catch (\Exception $e) {
+                // We try to throw only MetricExceptions to shut bad configurations exceptions
+                // We consider that we are supposed to know what we do (professional power).
+                throw new MetricException($e->getMessage());
             }
         }
 
@@ -131,6 +130,11 @@ class Metric implements MetricInterface
         throw new MetricException('This metric type is not handled');
     }
 
+    /**
+     * @param array<string, mixed> $resolvers
+     *
+     * @return array<string, string>
+     */
     public function getResolvedTags(array $resolvers = []): array
     {
         $resolvedTags = [];
@@ -138,8 +142,8 @@ class Metric implements MetricInterface
         // Add global parameters (configured in client or group)
         foreach (array_merge($this->configurationTags, $this->tags) as $tagName => $tagValue) {
             $resolvedTag = $this->resolveTagValue(
-                // By default (~), we look for the parameter with the same name as the tag.
-                !is_null($tagValue) ? $tagValue : self::TAG_PARAMETER_KEY.$tagName,
+                // By default, (~), we look for the parameter with the same name as the tag.
+                !is_null($tagValue) ? $tagValue : self::TAG_PARAMETER_KEY . $tagName,
                 $resolvers
             );
 
@@ -151,6 +155,7 @@ class Metric implements MetricInterface
         return $resolvedTags;
     }
 
+    /** @param array<string> $placeholders */
     private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders): string
     {
         foreach ($placeholders as $placeholder) {
@@ -161,24 +166,25 @@ class Metric implements MetricInterface
                 $value = $this->propertyAccessor->getValue($this->event, $placeholder);
             }
             // Replace placeholders with the associated value
-            $metricName = (string) str_replace('<'.$placeholder.'>', $value, $metricName);
+            $metricName = (string) str_replace('<' . $placeholder . '>', $value, $metricName);
         }
 
         return $metricName;
     }
 
+    /** @param array<string, mixed> $resolvers */
     private function resolveTagValue(string $valueToResolve, array $resolvers): ?string
     {
         switch (true) {
-            case strpos($valueToResolve, self::TAG_SERVICE_RESOLUTION) === 0:
+            case str_starts_with($valueToResolve, self::TAG_SERVICE_RESOLUTION):
                 return $this->expressionLanguage->evaluate(substr($valueToResolve, strlen(self::TAG_SERVICE_RESOLUTION)), $resolvers);
-            case strpos($valueToResolve, self::TAG_PROPERTY_ACCESSOR) === 0:
+            case str_starts_with($valueToResolve, self::TAG_PROPERTY_ACCESSOR):
                 try {
                     return $this->propertyAccessor->getValue($this->event, substr($valueToResolve, strlen(self::TAG_PROPERTY_ACCESSOR)));
                 } catch (\Exception $e) {
                     return null;
                 }
-            case strpos($valueToResolve, self::TAG_PARAMETER_KEY) === 0:
+            case str_starts_with($valueToResolve, self::TAG_PARAMETER_KEY):
                 $parameter = substr($valueToResolve, strlen(self::TAG_PARAMETER_KEY));
                 if (!$this->event instanceof MonitoringEventInterface) {
                     return null;

@@ -77,8 +77,7 @@ vendor/bin/.phpunit: phpunit
 
 .PHONY: phpstan
 phpstan: vendor/bin/.phpunit
-	${BIN_DIR}/phpstan.phar analyse
-
+	${BIN_DIR}/phpstan.phar analyse --memory-limit=-1
 # QUALITY
 .PHONY: cs
 cs:

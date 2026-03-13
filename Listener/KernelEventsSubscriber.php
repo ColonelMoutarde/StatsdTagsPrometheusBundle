@@ -14,14 +14,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class KernelEventsSubscriber implements EventSubscriberInterface
 {
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
-    /** @var array */
-    private $routesForWhichKernelTerminateEventWontBeDispatched;
+    /** @var array<string> */
+    private array $routesForWhichKernelTerminateEventWontBeDispatched;
 
-    /** @var array */
-    private $routesForWhichKernelExceptionEventWontBeDispatched;
+    /** @var array<string> */
+    private array $routesForWhichKernelExceptionEventWontBeDispatched;
 
     public static function getSubscribedEvents(): array
     {
@@ -31,10 +30,14 @@ class KernelEventsSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param array<string> $routesForWhichKernelTerminateEventWontBeDispatched
+     * @param array<string> $routesForWhichKernelExceptionEventWontBeDispatched
+     */
     public function __construct(
         EventDispatcherInterface $dispatcher,
         array $routesForWhichKernelTerminateEventWontBeDispatched,
-        array $routesForWhichKernelExceptionEventWontBeDispatched
+        array $routesForWhichKernelExceptionEventWontBeDispatched,
     ) {
         $this->dispatcher = $dispatcher;
         $this->routesForWhichKernelTerminateEventWontBeDispatched = $routesForWhichKernelTerminateEventWontBeDispatched;
@@ -54,9 +57,8 @@ class KernelEventsSubscriber implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        $isMainRequest = method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest();
         if (
-            !$isMainRequest
+            !$event->isMainRequest()
             || \in_array($event->getRequest()->attributes->get('_route'), $this->routesForWhichKernelExceptionEventWontBeDispatched, true)
         ) {
             return;
