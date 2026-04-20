@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
-final class StatsdDataCollector extends DataCollector
+class StatsdDataCollector extends DataCollector
 {
     /** @var EventListener[] */
     private array $eventListeners;
