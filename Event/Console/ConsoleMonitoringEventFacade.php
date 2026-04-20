@@ -42,7 +42,9 @@ class ConsoleMonitoringEventFacade
         );
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array<string, mixed>
+     */
     public function toMonitoringArray(): array
     {
         return [

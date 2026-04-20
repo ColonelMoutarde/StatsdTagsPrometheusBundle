@@ -3,27 +3,24 @@
 namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\DependencyInjection;
 
 use M6Web\Bundle\StatsdPrometheusBundle\DependencyInjection\M6WebStatsdPrometheusExtension;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Yaml\Yaml;
 
-class M6WebStatsdPrometheusExtensionTest extends TestCase
+final class M6WebStatsdPrometheusExtensionTest extends TestCase
 {
-    use \Symfony\Component\VarDumper\Test\VarDumperTestTrait;
+    private ContainerBuilder $container;
 
-    /** @var ContainerBuilder */
-    private $container;
-
-    /** @var M6WebStatsdPrometheusExtension */
-    private $extension;
+    private M6WebStatsdPrometheusExtension $extension;
 
     /**
-     * @dataProvider dataProviderForGetServersReturnsExpectation
-     *
      * @param array<mixed> $config
      * @param array<mixed> $expected
      */
+    #[DataProvider('dataProviderForGetServersReturnsExpectation')]
     public function testGetServersReturnsExpectation(array $config, array $expected): void
     {
         // -- When --
@@ -33,11 +30,10 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderForGetClientsReturnsExpectation
-     *
      * @param array<mixed> $config
      * @param array<mixed> $expected
      */
+    #[DataProvider('dataProviderForGetClientsReturnsExpectation')]
     public function testGetClientsReturnsExpectation(array $config, array $expected): void
     {
         // -- When --
@@ -46,9 +42,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         $this->assertEquals($expected, $this->extension->getClients());
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[DoesNotPerformAssertions]
     public function testLoadCorrectTagsConfigurationDoesNoesNotThrowException(): void
     {
         // -- Given --
@@ -84,7 +78,7 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     public function testLoadCorrectYmlConfigurationFileDoesNotThrowException(): void
     {
         // -- Given --
-        $config = Yaml::parseFile(__DIR__ . '/../Fixtures/CorrectConfigurationFileTest.yml');
+        $config = Yaml::parseFile(__DIR__.'/../Fixtures/CorrectConfigurationFileTest.yml');
         // -- Expects --
         // NO exceptions
         // -- When --
@@ -94,15 +88,17 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
     public function testLoadWrongYmlConfigurationFileThrowsException(): void
     {
         // -- Given --
-        $config = Yaml::parseFile(__DIR__ . '/../Fixtures/WrongConfigurationFileTest.yml');
+        $config = Yaml::parseFile(__DIR__.'/../Fixtures/WrongConfigurationFileTest.yml');
         // -- Expects --
         $this->expectException(InvalidConfigurationException::class);
         // -- When --
         $this->extension->load([$config[M6WebStatsdPrometheusExtension::CONFIG_ROOT_KEY]], $this->container);
     }
 
-    /** @return array<mixed> */
-    public function dataProviderForGetServersReturnsExpectation(): array
+    /**
+     * @return array<mixed>
+     */
+    public static function dataProviderForGetServersReturnsExpectation(): array
     {
         return [
             'test1' => [
@@ -126,8 +122,10 @@ class M6WebStatsdPrometheusExtensionTest extends TestCase
         ];
     }
 
-    /** @return array<mixed> */
-    public function dataProviderForGetClientsReturnsExpectation(): array
+    /**
+     * @return array<mixed>
+     */
+    public static function dataProviderForGetClientsReturnsExpectation(): array
     {
         return [
             'test1' => [

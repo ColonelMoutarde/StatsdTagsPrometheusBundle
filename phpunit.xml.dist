@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit colors="true" bootstrap="vendor/autoload.php">
+<phpunit colors="true" bootstrap="vendor/autoload.php" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd">
     <testsuites>
         <testsuite name="StatsdPrometheusBundle Test Suite">
             <directory>./Tests</directory>
+            <exclude>./Tests/Fixtures</exclude>
         </testsuite>
     </testsuites>
 
-    <filter>
-        <whitelist>
+    <source>
+        <include>
             <directory>.</directory>
-            <exclude>
-                <directory>./Tests</directory>
-                <directory>./vendor</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <directory>./Tests</directory>
+            <directory>./vendor</directory>
+        </exclude>
+    </source>
 </phpunit>

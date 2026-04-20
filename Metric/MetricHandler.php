@@ -101,7 +101,9 @@ class MetricHandler
         $this->request = $request;
     }
 
-    /** @param \SplQueue<MetricInterface> $queue */
+    /**
+     * @param \SplQueue<MetricInterface> $queue
+     */
     public function setMetricsQueue(\SplQueue $queue): void
     {
         $this->metrics = $queue;
@@ -114,7 +116,9 @@ class MetricHandler
         return $this;
     }
 
-    /** @return \SplQueue<MetricInterface> */
+    /**
+     * @return \SplQueue<MetricInterface>
+     */
     public function getMetrics(): \SplQueue
     {
         return $this->metrics;
@@ -183,7 +187,9 @@ class MetricHandler
         ]);
     }
 
-    /** @param array<string, string> $data */
+    /**
+     * @param array<string, string> $data
+     */
     protected function getFormattedMetricFromData(array $data): string
     {
         return str_replace(array_keys($data), array_values($data), self::METRIC_FORMAT);
@@ -205,6 +211,6 @@ class MetricHandler
         );
         $inlineTags = implode(',', $formatLines);
 
-        return !empty($inlineTags) ? '|#' . $inlineTags : '';
+        return !empty($inlineTags) ? '|#'.$inlineTags : '';
     }
 }

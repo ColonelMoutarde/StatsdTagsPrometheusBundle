@@ -5,7 +5,7 @@ on: [push]
 jobs:
     cs:
         name: Code Style
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
 
     phpunit:
         name: Unit Tests
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         env:
             COMPOSER_MEMORY_LIMIT: "-1"
         strategy:
@@ -50,6 +50,8 @@ jobs:
                       symfony_version: "7.1.*"
                     - php: 8.3
                       symfony_version: "7.2.*"
+                    - php: 8.4
+                      symfony_version: "7.3.*"
             fail-fast: false
         steps:
             - name: Checkout

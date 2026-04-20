@@ -9,14 +9,17 @@ use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricHandler;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricInterface;
 use M6Web\Bundle\StatsdPrometheusBundle\Tests\Fixtures\CustomEventTest;
 use M6Web\Bundle\StatsdPrometheusBundle\Tests\TestMonitoringEvent;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class MetricHandlerTest extends TestCase
+final class MetricHandlerTest extends TestCase
 {
     public function testGetMetricsReturnsExpectedWhenAddMetric(): void
     {
@@ -215,11 +218,10 @@ class MetricHandlerTest extends TestCase
     }
 
     /**
-     * @dataProvider getDataEventsWithFormattedMetrics
-     *
      * @param Event|KernelEvent    $event
      * @param array<string, mixed> $metricConfig
      */
+    #[DataProvider('getDataEventsWithFormattedMetrics')]
     public function testGetFormattedMetricsReturnsExpected($event, Request $masterRequest, array $metricConfig, string $expectedResult): void
     {
         // -- Given --
@@ -230,7 +232,9 @@ class MetricHandlerTest extends TestCase
         $this->assertSame($expectedResult, $metricHandler->getFormattedMetric($metric));
     }
 
-    /** @param \SplQueue<MetricInterface>|null $metricsQueue */
+    /**
+     * @param \SplQueue<MetricInterface>|null $metricsQueue
+     */
     protected function getMetricHandlerObject(?ClientInterface $client = null, ?\SplQueue $metricsQueue = null): MetricHandler
     {
         $metricHandler = new MetricHandler();
@@ -245,7 +249,7 @@ class MetricHandlerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject&\SplQueue<MetricInterface>
+     * @return MockObject&\SplQueue<MetricInterface>
      */
     private function getMetricsQueueMock(bool $isEmpty, int $count = 0)
     {
@@ -259,17 +263,30 @@ class MetricHandlerTest extends TestCase
     }
 
     /**
-     * @return UdpClient&\PHPUnit\Framework\MockObject\MockObject
+     * @return UdpClient&MockObject
      */
     private function getUdpClientMock()
     {
         return $this->createMock(UdpClient::class);
     }
 
-    /** @return array<mixed> */
-    public function getDataEventsWithFormattedMetrics(): array
+    /**
+     * @return array<mixed>
+     */
+    public static function getDataEventsWithFormattedMetrics(): array
     {
         $defaultRequest = new Request([], ['country' => 'fr']);
+
+        $stubKernel = new class ('test', true) extends Kernel {
+            public function registerBundles(): iterable
+            {
+                return [];
+            }
+
+            public function registerContainerConfiguration(LoaderInterface $loader): void
+            {
+            }
+        };
 
         return [
             // Increment: object Event (no tags)
@@ -288,7 +305,7 @@ class MetricHandlerTest extends TestCase
             // Increment: object Event (computed configuration tag with unknown value)
             [
                 'event' => new KernelEvent(
-                    $this->getMockBuilder(Kernel::class)->disableOriginalConstructor()->getMock(),
+                    $stubKernel,
                     new Request([], ['country' => 'be']),
                     HttpKernelInterface::SUB_REQUEST
                 ),
@@ -307,7 +324,7 @@ class MetricHandlerTest extends TestCase
             // Increment: object Event (computed configuration tag)
             [
                 'event' => new KernelEvent(
-                    $this->getMockBuilder(Kernel::class)->disableOriginalConstructor()->getMock(),
+                    $stubKernel,
                     new Request([], ['country' => 'be']),
                     HttpKernelInterface::SUB_REQUEST
                 ),

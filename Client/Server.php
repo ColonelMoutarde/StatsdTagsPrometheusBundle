@@ -45,10 +45,10 @@ class Server implements ServerInterface
         }
 
         if (!isset($serverConfig['address'], $serverConfig['port'])) {
-            throw new ServerException($serverName . ' : no address or port in the configuration');
+            throw new ServerException($serverName.' : no address or port in the configuration');
         }
         if (!str_starts_with($serverConfig['address'], 'udp://')) {
-            throw new ServerException($serverName . ' : address should begin with udp://');
+            throw new ServerException($serverName.' : address should begin with udp://');
         }
 
         return true;

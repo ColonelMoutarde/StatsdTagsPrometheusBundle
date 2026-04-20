@@ -5,18 +5,18 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\Tests\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Metric\Metric;
 use M6Web\Bundle\StatsdPrometheusBundle\Tests\Fixtures\CustomEventTest;
 use M6Web\Bundle\StatsdPrometheusBundle\Tests\TestMonitoringEvent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class MetricTest extends TestCase
+final class MetricTest extends TestCase
 {
     /**
-     * @dataProvider dataProviderGetMetricsName
-     *
      * @param array<string, mixed> $metricConfig
      */
+    #[DataProvider('dataProviderGetMetricsName')]
     public function testGetResolvedNameReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
         // -- Given --
@@ -25,8 +25,10 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedName());
     }
 
-    /** @return array<mixed> */
-    public function dataProviderGetMetricsName(): array
+    /**
+     * @return array<mixed>
+     */
+    public static function dataProviderGetMetricsName(): array
     {
         return [
             [
@@ -53,10 +55,9 @@ class MetricTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderGetMetricsType
-     *
      * @param array<string, mixed> $metricConfig
      */
+    #[DataProvider('dataProviderGetMetricsType')]
     public function testGetResolvedTypeReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
         // -- Given --
@@ -65,8 +66,10 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedType());
     }
 
-    /** @return array<mixed> */
-    public function dataProviderGetMetricsType(): array
+    /**
+     * @return array<mixed>
+     */
+    public static function dataProviderGetMetricsType(): array
     {
         return [
             [
@@ -113,10 +116,9 @@ class MetricTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderGetMetricsValue
-     *
      * @param array<string, mixed> $metricConfig
      */
+    #[DataProvider('dataProviderGetMetricsValue')]
     public function testGetResolvedValueReturnsExpected(Event $event, array $metricConfig, string $expectedResult): void
     {
         // -- Given --TestMonitoringEvent
@@ -125,8 +127,10 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedValue());
     }
 
-    /** @return array<mixed> */
-    public function dataProviderGetMetricsValue(): array
+    /**
+     * @return array<mixed>
+     */
+    public static function dataProviderGetMetricsValue(): array
     {
         return [
             'increment value' => [
@@ -184,7 +188,7 @@ class MetricTest extends TestCase
                 '12045465',
             ],
             'custom value from object' => [
-                new class extends Event {
+                new class () extends Event {
                     public function getCustomValue(): int
                     {
                         return 10;
@@ -200,7 +204,7 @@ class MetricTest extends TestCase
                 '10',
             ],
             'custom value from object corrected by 1000' => [
-                new class extends Event {
+                new class () extends Event {
                     public function getCustomValue(): float
                     {
                         return 10.002;
@@ -227,8 +231,10 @@ class MetricTest extends TestCase
                 '0',
             ],
             'custom value from object return null' => [
-                new class extends Event {
-                    /** @return null */
+                new class () extends Event {
+                    /**
+                     * @return null
+                     */
                     public function getCustomValue()
                     {
                         return null;
@@ -247,12 +253,11 @@ class MetricTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderGetMetricsTag
-     *
-     * @param array<string, mixed> $metricConfig
-     * @param array<string, mixed> $resolvers
+     * @param array<string, mixed>  $metricConfig
+     * @param array<string, mixed>  $resolvers
      * @param array<string, string> $expectedResult
      */
+    #[DataProvider('dataProviderGetMetricsTag')]
     public function testGetResolvedTagsReturnsExpected(Event $event, array $metricConfig, array $resolvers, array $expectedResult): void
     {
         // -- Given --
@@ -261,7 +266,7 @@ class MetricTest extends TestCase
         $this->assertSame($expectedResult, $metric->getResolvedTags($resolvers));
     }
 
-    public function dataProviderGetMetricsTag(): \Generator
+    public static function dataProviderGetMetricsTag(): \Generator
     {
         $resolvers = [];
 

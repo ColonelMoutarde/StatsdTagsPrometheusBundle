@@ -23,26 +23,17 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 {
     public const CONFIG_ROOT_KEY = 'm6web_statsd_prometheus';
 
-    /** @var ContainerBuilder */
-    private $container;
+    private ContainerBuilder $container;
 
-    /** @var string */
-    private $metricsPrefix = '';
+    private string $metricsPrefix = '';
 
-    /** @var array */
-    private $clientServiceIds = [];
+    private array $clientServiceIds = [];
 
-    /** @var array */
-    private $servers;
+    private array $servers;
 
-    /** @var array */
-    private $clients;
+    private array $clients;
 
-    /** @var array */
-    private $tags;
-
-    /** @var array */
-    private $dispatchedEvents;
+    private array $dispatchedEvents;
 
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
@@ -51,14 +42,14 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
         $this->metricsPrefix = $config['metrics']['prefix'] ?? '';
         $this->servers = $config['servers'] ?? [];
         $this->clients = $config['clients'] ?? [];
-        $this->tags = $config['tags'] ?? [];
+        $tags = $config['tags'] ?? [];
         $this->dispatchedEvents = $config['dispatched_events'];
 
         foreach ($this->clients as $alias => $clientConfig) {
             $this->clientServiceIds[] = $this->setEventListenerAsServiceAndGetServiceId(
                 $alias,
                 $clientConfig,
-                $this->tags
+                $tags
             );
         }
 
@@ -114,7 +105,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
 
     protected function getServiceIdFrom(string $alias): string
     {
-        return ($alias === 'default') ? self::CONFIG_ROOT_KEY : self::CONFIG_ROOT_KEY . $alias;
+        return ($alias === 'default') ? self::CONFIG_ROOT_KEY : self::CONFIG_ROOT_KEY.$alias;
     }
 
     /**
@@ -135,7 +126,7 @@ class M6WebStatsdPrometheusExtension extends ConfigurableExtension
                         $eventsGroupConfig['tags'] ?? []
                     );
                     // Prefix the metric name.
-                    $metricConfig['name'] = $this->metricsPrefix . $metricConfig['name'];
+                    $metricConfig['name'] = $this->metricsPrefix.$metricConfig['name'];
                 }
                 // Set all the metrics config array in the object
                 // One event can send several metrics. Multiple metrics will be handled in the EventListener.

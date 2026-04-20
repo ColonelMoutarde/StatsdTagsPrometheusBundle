@@ -30,7 +30,9 @@ class UdpClient implements ClientInterface
         }
     }
 
-    /** @param array<string> $lines */
+    /**
+     * @param array<string> $lines
+     */
     protected function writeLines(array $lines): bool
     {
         if ($resource = @fsockopen($this->server->getAddress(), $this->server->getPort())) {
@@ -57,7 +59,7 @@ class UdpClient implements ClientInterface
     {
         if ($this->debugEnabled) {
             // With debug mode on, we add a carriage return to provide more readable data
-            return $line . "\n";
+            return $line."\n";
         }
 
         return $line;

@@ -143,7 +143,7 @@ class Metric implements MetricInterface
         foreach (array_merge($this->configurationTags, $this->tags) as $tagName => $tagValue) {
             $resolvedTag = $this->resolveTagValue(
                 // By default, (~), we look for the parameter with the same name as the tag.
-                !is_null($tagValue) ? $tagValue : self::TAG_PARAMETER_KEY . $tagName,
+                !is_null($tagValue) ? $tagValue : self::TAG_PARAMETER_KEY.$tagName,
                 $resolvers
             );
 
@@ -155,7 +155,9 @@ class Metric implements MetricInterface
         return $resolvedTags;
     }
 
-    /** @param array<string> $placeholders */
+    /**
+     * @param array<string> $placeholders
+     */
     private function resolvePlaceholdersInMetricName(string $metricName, array $placeholders): string
     {
         foreach ($placeholders as $placeholder) {
@@ -166,13 +168,15 @@ class Metric implements MetricInterface
                 $value = $this->propertyAccessor->getValue($this->event, $placeholder);
             }
             // Replace placeholders with the associated value
-            $metricName = (string) str_replace('<' . $placeholder . '>', $value, $metricName);
+            $metricName = (string) str_replace('<'.$placeholder.'>', $value, $metricName);
         }
 
         return $metricName;
     }
 
-    /** @param array<string, mixed> $resolvers */
+    /**
+     * @param array<string, mixed> $resolvers
+     */
     private function resolveTagValue(string $valueToResolve, array $resolvers): ?string
     {
         switch (true) {

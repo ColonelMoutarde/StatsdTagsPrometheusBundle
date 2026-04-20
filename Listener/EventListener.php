@@ -70,7 +70,9 @@ class EventListener
         $this->metricHandler->sendMetrics();
     }
 
-    /** @param array<string, mixed> $eventConfig */
+    /**
+     * @param array<string, mixed> $eventConfig
+     */
     public function addEventToListen(string $eventName, array $eventConfig): self
     {
         $this->listenedEvents[$eventName] = $eventConfig;

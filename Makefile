@@ -71,12 +71,12 @@ test: phpunit
 .PHONY: phpunit
 phpunit:
 	$(call printSection,PHPUNIT)
-	${BIN_DIR}/simple-phpunit
+	${BIN_DIR}/phpunit
 
 vendor/bin/.phpunit: phpunit
 
 .PHONY: phpstan
-phpstan: vendor/bin/.phpunit
+phpstan:
 	${BIN_DIR}/phpstan.phar analyse --memory-limit=-1
 # QUALITY
 .PHONY: cs

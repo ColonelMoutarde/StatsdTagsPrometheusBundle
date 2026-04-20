@@ -4,7 +4,6 @@ namespace M6Web\Bundle\StatsdPrometheusBundle\DataCollector;
 
 use M6Web\Bundle\StatsdPrometheusBundle\Exception\MetricException;
 use M6Web\Bundle\StatsdPrometheusBundle\Listener\EventListener;
-use M6Web\Bundle\StatsdPrometheusBundle\Metric\MetricInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -12,10 +11,10 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class StatsdDataCollector extends DataCollector
+final class StatsdDataCollector extends DataCollector
 {
     /** @var EventListener[] */
-    private $eventListeners;
+    private array $eventListeners;
 
     public function __construct()
     {
@@ -73,7 +72,9 @@ class StatsdDataCollector extends DataCollector
      * @param Response        $response  The response object
      * @param \Throwable|null $exception A throwable
      */
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void {}
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
+    {
+    }
 
     /**
      * Return the list of statsd operations

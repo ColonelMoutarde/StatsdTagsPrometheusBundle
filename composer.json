@@ -29,6 +29,7 @@
     "require-dev": {
         "m6web/php-cs-fixer-config": "^2.0",
         "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^10.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "symfony/phpunit-bridge": "^6.4 || ^7.0"
     },
