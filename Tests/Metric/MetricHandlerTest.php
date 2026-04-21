@@ -277,7 +277,7 @@ final class MetricHandlerTest extends TestCase
     {
         $defaultRequest = new Request([], ['country' => 'fr']);
 
-        $stubKernel = new class ('test', true) extends Kernel {
+        $stubKernel = self::createStub(HttpKernelInterface::class);
             public function registerBundles(): iterable
             {
                 return [];
