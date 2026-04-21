@@ -278,15 +278,6 @@ final class MetricHandlerTest extends TestCase
         $defaultRequest = new Request([], ['country' => 'fr']);
 
         $stubKernel = self::createStub(HttpKernelInterface::class);
-            public function registerBundles(): iterable
-            {
-                return [];
-            }
-
-            public function registerContainerConfiguration(LoaderInterface $loader): void
-            {
-            }
-        };
 
         return [
             // Increment: object Event (no tags)
